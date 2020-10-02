@@ -85,6 +85,11 @@ public class JiraIntegrationController extends AbstractController {
     return AbstractResponse.build(jiraAgileService.getIssuesInASprintSearchResult(sprintCode, fields));
   }
 
+  @GetMapping(Services.Path.BOARDS)
+  public AbstractResponse getAllBoards() {
+    return AbstractResponse.build(jiraAgileService.getAllBoards());
+  }
+
   @PostMapping(Services.Path.CREATE_LOG)
   public AbstractResponse createNewWorklog(@RequestBody CreateWorklogRequest createWorklogRequest){
     logger.info("A request has been received to create a new worklog in issue {}", createWorklogRequest.getIssueKey());

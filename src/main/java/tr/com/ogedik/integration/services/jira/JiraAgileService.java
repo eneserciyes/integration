@@ -5,6 +5,7 @@ import tr.com.ogedik.commons.abstraction.AbstractService;
 import tr.com.ogedik.commons.rest.request.client.HttpRestClient;
 import tr.com.ogedik.commons.rest.request.client.helper.RequestURLDetails;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
+import tr.com.ogedik.commons.rest.response.BoardsResponse;
 import tr.com.ogedik.commons.rest.response.RestResponse;
 import tr.com.ogedik.commons.rest.response.model.JQLSearchResult;
 import tr.com.ogedik.commons.util.MapUtils;
@@ -37,5 +38,17 @@ public class JiraAgileService extends AbstractService {
                 JQLSearchResult.class);
 
         return resolve(searchResponse);
+    }
+
+    public BoardsResponse getAllBoards(){
+        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+        MandatoryFieldValidator.getInstance().validate(properties);
+        RequestURLDetails requestURLDetails = new RequestURLDetails(properties.getBaseURL(),
+                JiraRestConstants.EndPoint.BOARDS, null);
+
+        RestResponse<BoardsResponse> boardsResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
+                BoardsResponse.class);
+
+        return resolve(boardsResponse);
     }
 }
