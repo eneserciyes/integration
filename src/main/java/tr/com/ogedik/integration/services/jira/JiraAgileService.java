@@ -7,6 +7,7 @@ import tr.com.ogedik.commons.rest.request.client.helper.RequestURLDetails;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
 import tr.com.ogedik.commons.rest.response.BoardsResponse;
 import tr.com.ogedik.commons.rest.response.RestResponse;
+import tr.com.ogedik.commons.rest.response.SprintResponse;
 import tr.com.ogedik.commons.rest.response.model.JQLSearchResult;
 import tr.com.ogedik.commons.util.MapUtils;
 import tr.com.ogedik.commons.validator.MandatoryFieldValidator;
@@ -50,5 +51,17 @@ public class JiraAgileService extends AbstractService {
                 BoardsResponse.class);
 
         return resolve(boardsResponse);
+    }
+
+    public SprintResponse getSprintsInABoard(String boardId) {
+        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+        MandatoryFieldValidator.getInstance().validate(properties);
+        RequestURLDetails requestURLDetails = new RequestURLDetails(properties.getBaseURL(),
+                JiraRestConstants.EndPoint.SPRINTS(boardId), null);
+
+        RestResponse<SprintResponse> sprintResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
+                SprintResponse.class);
+
+        return resolve(sprintResponse);
     }
 }

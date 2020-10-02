@@ -13,6 +13,7 @@ public class JiraRestConstants {
         public static String SPRINT(String sprintCode){
             return "/rest/agile/1.0/sprint/" + sprintCode + "/issue";
         }
+        public static String SPRINTS(String boardId) {return "/rest/agile/1.0/board/" + boardId + "/sprint";}
         public static String CREATE(String issueKey){
             return "/rest/api/2/issue/" + issueKey + "/worklog";
         }
