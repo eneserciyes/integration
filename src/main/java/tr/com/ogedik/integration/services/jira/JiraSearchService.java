@@ -2,6 +2,7 @@ package tr.com.ogedik.integration.services.jira;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tr.com.ogedik.commons.constants.IssueFields;
 import tr.com.ogedik.commons.rest.request.client.HttpRestClient;
 import tr.com.ogedik.commons.rest.request.client.helper.RequestURLDetails;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
@@ -16,9 +17,6 @@ import tr.com.ogedik.integration.util.IntegrationUtil;
 @Service
 public class JiraSearchService {
 
-    public static final String WORKLOG = "worklog";
-    public static final String SUMMARY = "summary";
-
     @Autowired
     private ConfigurationIntegrationService configurationService;
 
@@ -30,7 +28,15 @@ public class JiraSearchService {
         final String jql = String.format("worklogAuthor=%s and worklogDate >= %s and worklogDate <= %s",
                 username, startDate, endDate);
 
-        return queryJQL(properties, jql, WORKLOG, SUMMARY);
+        return queryJQL(properties, jql, IssueFields.WORKLOG, IssueFields.SUMMARY);
+    }
+
+    public JQLSearchResult getRecentIssues(){
+        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+        MandatoryFieldValidator.getInstance().validate(properties);
+        final String jql = "issueKey in issueHistory() ORDER BY lastViewed DESC";
+
+        return queryJQL(properties,jql, IssueFields.SUMMARY);
     }
 
     private JQLSearchResult queryJQL(JiraConfigurationProperties properties, String jql) {

@@ -65,6 +65,12 @@ public class JiraIntegrationController extends AbstractController {
     return AbstractResponse.build(jiraIntegrationService.getJiraUser(username));
   }
 
+  @GetMapping(Services.Path.ISSUES)
+  public AbstractResponse getRecentIssues() {
+    return AbstractResponse.build(jiraSearchService.getRecentIssues());
+
+  }
+
   @GetMapping(Services.Path.LOGGED_ISSUES)
   public AbstractResponse getIssuesWithWorklogs(
       @RequestParam(name = "username") String username,
