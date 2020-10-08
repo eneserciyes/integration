@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import tr.com.ogedik.commons.constants.Services;
 import tr.com.ogedik.commons.rest.AbstractController;
 import tr.com.ogedik.commons.rest.request.model.AuthenticationRequest;
-import tr.com.ogedik.commons.rest.request.model.CreateWorklogRequest;
+import tr.com.ogedik.commons.rest.request.model.CreateUpdateWorklogRequest;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
 import tr.com.ogedik.commons.rest.request.model.sessions.JiraSession;
 import tr.com.ogedik.commons.rest.response.AbstractResponse;
 import tr.com.ogedik.integration.services.jira.JiraAgileService;
+import tr.com.ogedik.integration.services.jira.JiraCRUDService;
 import tr.com.ogedik.integration.services.jira.JiraIntegrationService;
 import tr.com.ogedik.integration.services.jira.JiraSearchService;
-import tr.com.ogedik.integration.services.jira.JiraWorklogCreationService;
 
 /**
  * @author orkun.gedik
@@ -27,18 +27,18 @@ public class JiraIntegrationController extends AbstractController {
 
   private final JiraSearchService jiraSearchService;
 
-  private final JiraWorklogCreationService jiraWorklogCreationService;
+  private final JiraCRUDService jiraCRUDService;
 
   private final JiraAgileService jiraAgileService;
 
   public JiraIntegrationController(
-      JiraIntegrationService jiraIntegrationService,
-      JiraSearchService jiraSearchService,
-      JiraWorklogCreationService jiraWorklogCreationService,
-      JiraAgileService jiraAgileService) {
+          JiraIntegrationService jiraIntegrationService,
+          JiraSearchService jiraSearchService,
+          JiraCRUDService jiraCRUDService,
+          JiraAgileService jiraAgileService) {
     this.jiraIntegrationService = jiraIntegrationService;
     this.jiraSearchService = jiraSearchService;
-    this.jiraWorklogCreationService = jiraWorklogCreationService;
+    this.jiraCRUDService = jiraCRUDService;
     this.jiraAgileService = jiraAgileService;
   }
 
@@ -101,9 +101,21 @@ public class JiraIntegrationController extends AbstractController {
     return AbstractResponse.build(jiraAgileService.getSprintsInABoard(boardId));
   }
 
-  @PostMapping(Services.Path.CREATE_LOG)
-  public AbstractResponse createNewWorklog(@RequestBody CreateWorklogRequest createWorklogRequest){
-    logger.info("A request has been received to create a new worklog in issue {}", createWorklogRequest.getIssueKey());
-    return AbstractResponse.build(jiraWorklogCreationService.createWorklog(createWorklogRequest));
+  @PostMapping(Services.Path.WORKLOG)
+  public AbstractResponse createNewWorklog(
+      @RequestBody CreateUpdateWorklogRequest createWorklogRequest) {
+    logger.info(
+        "A request has been received to create a new worklog in issue {}",
+        createWorklogRequest.getIssueKey());
+    return AbstractResponse.build(jiraCRUDService.createWorklog(createWorklogRequest));
+  }
+
+  @PutMapping(Services.Path.WORKLOG)
+  public AbstractResponse updateWorklog(@RequestBody CreateUpdateWorklogRequest updateWorklogRequest){
+    logger.info(
+            "A request has been received to update the new worklog with id {}",
+            updateWorklogRequest.getIssueKey());
+
+    return AbstractResponse.build(jiraCRUDService.updateWorklog(updateWorklogRequest));
   }
 }

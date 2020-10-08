@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tr.com.ogedik.commons.rest.request.client.HttpRestClient;
 import tr.com.ogedik.commons.rest.request.client.helper.RequestURLDetails;
-import tr.com.ogedik.commons.rest.request.model.CreateWorklogRequest;
+import tr.com.ogedik.commons.rest.request.model.CreateUpdateWorklogRequest;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
 import tr.com.ogedik.commons.rest.request.model.JiraCreateWorklogRequest;
 import tr.com.ogedik.commons.rest.response.RestResponse;
@@ -18,25 +18,25 @@ import tr.com.ogedik.integration.util.IntegrationUtil;
  * @author enes.erciyes
  */
 @Service
-public class JiraWorklogCreationService {
+public class JiraCRUDService {
 
   @Autowired private ConfigurationIntegrationService configurationService;
 
-  public Boolean createWorklog(CreateWorklogRequest createWorklogRequest) {
+  public Boolean createWorklog(CreateUpdateWorklogRequest createUpdateWorklogRequest) {
     JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
     MandatoryFieldValidator.getInstance().validate(properties);
 
     JiraCreateWorklogRequest request =
         JiraCreateWorklogRequest.builder()
-            .comment(createWorklogRequest.getComment())
-            .started(createWorklogRequest.getStarted())
-            .timeSpentSeconds(createWorklogRequest.getTimeSpentSeconds())
+            .comment(createUpdateWorklogRequest.getComment())
+            .started(createUpdateWorklogRequest.getStarted())
+            .timeSpentSeconds(createUpdateWorklogRequest.getTimeSpentSeconds())
             .build();
 
     RequestURLDetails requestURLDetails =
         new RequestURLDetails(
             properties.getBaseURL(),
-            JiraRestConstants.EndPoint.CREATE(createWorklogRequest.getIssueKey()),
+            JiraRestConstants.EndPoint.CREATE(createUpdateWorklogRequest.getIssueKey()),
             null);
 
     RestResponse<String> response =
@@ -44,5 +44,23 @@ public class JiraWorklogCreationService {
             requestURLDetails, request, IntegrationUtil.initJiraHeaders(properties), String.class);
 
     return response.getHttpStatusCode() == HttpStatus.CREATED.value();
+  }
+
+  public boolean updateWorklog(CreateUpdateWorklogRequest updateWorklogRequest) {
+    JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+    MandatoryFieldValidator.getInstance().validate(properties);
+
+    JiraCreateWorklogRequest request =
+            JiraCreateWorklogRequest.builder()
+                    .comment(updateWorklogRequest.getComment())
+                    .started(updateWorklogRequest.getStarted())
+                    .timeSpentSeconds(updateWorklogRequest.getTimeSpentSeconds())
+                    .build();
+
+    RequestURLDetails requestURLDetails =
+            new RequestURLDetails(
+                    properties.getBaseURL(),
+                    JiraRestConstants.EndPoint.UPDATE(updateWorklogRequest.getIssueKey(), updateWorklogRequest.getId()),
+                    null);
   }
 }
