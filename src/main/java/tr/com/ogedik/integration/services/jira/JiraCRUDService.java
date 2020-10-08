@@ -46,7 +46,7 @@ public class JiraCRUDService {
     return response.getHttpStatusCode() == HttpStatus.CREATED.value();
   }
 
-  public boolean updateWorklog(CreateUpdateWorklogRequest updateWorklogRequest) {
+  public Boolean updateWorklog(CreateUpdateWorklogRequest updateWorklogRequest) {
     JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
     MandatoryFieldValidator.getInstance().validate(properties);
 
@@ -62,5 +62,11 @@ public class JiraCRUDService {
                     properties.getBaseURL(),
                     JiraRestConstants.EndPoint.UPDATE(updateWorklogRequest.getIssueKey(), updateWorklogRequest.getId()),
                     null);
+
+    RestResponse<String> response =
+            HttpRestClient.doPut(
+                    requestURLDetails, request, IntegrationUtil.initJiraHeaders(properties), String.class);
+
+    return response.getHttpStatusCode() == HttpStatus.OK.value();
   }
 }
