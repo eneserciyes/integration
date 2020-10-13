@@ -9,7 +9,9 @@ public class JiraRestConstants {
         public static String USER = "/rest/api/2/user";
         public static final String SEARCH = "/rest/api/2/search";
         public static String SESSION = "/rest/auth/1/session";
-
+        public static String SPRINT(String sprintCode){
+            return "/rest/agile/1.0/sprint/" + sprintCode + "/issue";
+        }
         public static String CREATE(String issueKey){
             return "/rest/api/2/issue/" + issueKey + "/worklog";
         }

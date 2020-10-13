@@ -14,7 +14,7 @@ import tr.com.ogedik.integration.services.configuration.ConfigurationIntegration
 import tr.com.ogedik.integration.util.IntegrationUtil;
 
 @Service
-public class JiraWorklogRetrievalService {
+public class JiraSearchService {
 
     public static final String WORKLOG = "worklog";
     public static final String SUMMARY = "summary";
