@@ -1,7 +1,6 @@
 package tr.com.ogedik.integration.services.jira;
 
 import org.springframework.stereotype.Service;
-import tr.com.ogedik.commons.abstraction.AbstractService;
 import tr.com.ogedik.commons.rest.request.client.HttpRestClient;
 import tr.com.ogedik.commons.rest.request.client.helper.RequestURLDetails;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
@@ -19,7 +18,7 @@ import tr.com.ogedik.integration.util.IntegrationUtil;
  * @author enes.erciyes
  */
 @Service
-public class JiraAgileService extends AbstractService {
+public class JiraAgileService {
     private final ConfigurationIntegrationService configurationService;
     public static final String WORKLOG = "worklog";
     public static final String SPRINT = "sprint";
@@ -38,7 +37,7 @@ public class JiraAgileService extends AbstractService {
         RestResponse<JQLSearchResult> searchResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
                 JQLSearchResult.class);
 
-        return resolve(searchResponse);
+        return searchResponse.getBody();
     }
 
     public BoardsResponse getAllBoards(){
@@ -50,7 +49,7 @@ public class JiraAgileService extends AbstractService {
         RestResponse<BoardsResponse> boardsResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
                 BoardsResponse.class);
 
-        return resolve(boardsResponse);
+        return boardsResponse.getBody();
     }
 
     public SprintResponse getSprintsInABoard(String boardId) {
@@ -62,6 +61,6 @@ public class JiraAgileService extends AbstractService {
         RestResponse<SprintResponse> sprintResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
                 SprintResponse.class);
 
-        return resolve(sprintResponse);
+        return sprintResponse.getBody();
     }
 }
