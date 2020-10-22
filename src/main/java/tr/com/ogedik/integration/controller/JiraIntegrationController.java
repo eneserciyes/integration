@@ -16,9 +16,7 @@ import tr.com.ogedik.integration.services.jira.JiraCRUDService;
 import tr.com.ogedik.integration.services.jira.JiraIntegrationService;
 import tr.com.ogedik.integration.services.jira.JiraSearchService;
 
-/**
- * @author orkun.gedik
- */
+/** @author orkun.gedik */
 @RestController
 public class JiraIntegrationController extends AbstractController {
   private static final Logger logger = LogManager.getLogger(JiraIntegrationController.class);
@@ -32,10 +30,10 @@ public class JiraIntegrationController extends AbstractController {
   private final JiraAgileService jiraAgileService;
 
   public JiraIntegrationController(
-          JiraIntegrationService jiraIntegrationService,
-          JiraSearchService jiraSearchService,
-          JiraCRUDService jiraCRUDService,
-          JiraAgileService jiraAgileService) {
+      JiraIntegrationService jiraIntegrationService,
+      JiraSearchService jiraSearchService,
+      JiraCRUDService jiraCRUDService,
+      JiraAgileService jiraAgileService) {
     this.jiraIntegrationService = jiraIntegrationService;
     this.jiraSearchService = jiraSearchService;
     this.jiraCRUDService = jiraCRUDService;
@@ -48,7 +46,8 @@ public class JiraIntegrationController extends AbstractController {
     logger.info("A request has been received to authenticate configured jira instance");
     JiraSession result = jiraIntegrationService.authenticate(authenticationRequest);
 
-    return AbstractResponse.build(result, result.isAuthorized() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
+    return AbstractResponse.build(
+        result, result.isAuthorized() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
   }
 
   @PostMapping(Services.Path.TEST_CONNECTION)
@@ -56,7 +55,8 @@ public class JiraIntegrationController extends AbstractController {
     logger.info("A request has been received to authenticate configured jira instance");
     JiraSession result = jiraIntegrationService.connect(properties);
 
-    return AbstractResponse.build(result, result.isAuthorized() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
+    return AbstractResponse.build(
+        result, result.isAuthorized() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
   }
 
   @GetMapping(Services.Path.JIRA_USER)
@@ -68,7 +68,6 @@ public class JiraIntegrationController extends AbstractController {
   @GetMapping(Services.Path.ISSUES)
   public AbstractResponse getRecentIssues() {
     return AbstractResponse.build(jiraSearchService.getRecentIssues());
-
   }
 
   @GetMapping(Services.Path.LOGGED_ISSUES)
@@ -85,10 +84,13 @@ public class JiraIntegrationController extends AbstractController {
   }
 
   @GetMapping(Services.Path.ISSUES_IN_SPRINT)
-  public AbstractResponse getIssuesInASprint(@RequestParam(name = "sprintCode") String sprintCode, @RequestParam(name="fields") String fields) {
+  public AbstractResponse getIssuesInASprint(
+      @RequestParam(name = "sprintCode") String sprintCode,
+      @RequestParam(name = "fields") String fields) {
     logger.info(
         "A request has been received to retrieve issues in sprint with code {}", sprintCode);
-    return AbstractResponse.build(jiraAgileService.getIssuesInASprintSearchResult(sprintCode, fields));
+    return AbstractResponse.build(
+        jiraAgileService.getIssuesInASprintSearchResult(sprintCode, fields));
   }
 
   @GetMapping(Services.Path.BOARDS)
@@ -97,7 +99,7 @@ public class JiraIntegrationController extends AbstractController {
   }
 
   @GetMapping(Services.Path.SPRINTS)
-  public AbstractResponse getSprintsInABoard(@RequestParam String boardId){
+  public AbstractResponse getSprintsInABoard(@RequestParam String boardId) {
     return AbstractResponse.build(jiraAgileService.getSprintsInABoard(boardId));
   }
 
@@ -111,10 +113,11 @@ public class JiraIntegrationController extends AbstractController {
   }
 
   @PutMapping(Services.Path.WORKLOG)
-  public AbstractResponse updateWorklog(@RequestBody CreateUpdateWorklogRequest updateWorklogRequest){
+  public AbstractResponse updateWorklog(
+      @RequestBody CreateUpdateWorklogRequest updateWorklogRequest) {
     logger.info(
-            "A request has been received to update the new worklog with id {}",
-            updateWorklogRequest.getIssueKey());
+        "A request has been received to update the new worklog with id {}",
+        updateWorklogRequest.getIssueKey());
 
     return AbstractResponse.build(jiraCRUDService.updateWorklog(updateWorklogRequest));
   }

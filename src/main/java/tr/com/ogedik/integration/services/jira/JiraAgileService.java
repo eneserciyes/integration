@@ -19,48 +19,55 @@ import tr.com.ogedik.integration.util.IntegrationUtil;
  */
 @Service
 public class JiraAgileService {
-    private final ConfigurationIntegrationService configurationService;
-    public static final String WORKLOG = "worklog";
-    public static final String SPRINT = "sprint";
+  private final ConfigurationIntegrationService configurationService;
+  public static final String WORKLOG = "worklog";
+  public static final String SPRINT = "sprint";
 
-    public JiraAgileService(ConfigurationIntegrationService configurationService) {
-        this.configurationService = configurationService;
-    }
+  public JiraAgileService(ConfigurationIntegrationService configurationService) {
+    this.configurationService = configurationService;
+  }
 
-    public JQLSearchResult getIssuesInASprintSearchResult(String sprintCode, String fields){
-        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
-        MandatoryFieldValidator.getInstance().validate(properties);
+  public JQLSearchResult getIssuesInASprintSearchResult(String sprintCode, String fields) {
+    JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+    MandatoryFieldValidator.getInstance().validate(properties);
 
-        RequestURLDetails requestURLDetails = new RequestURLDetails(properties.getBaseURL(),
-                JiraRestConstants.EndPoint.SPRINT(sprintCode), MapUtils.of("fields", fields));
+    RequestURLDetails requestURLDetails =
+        new RequestURLDetails(
+            properties.getBaseURL(),
+            JiraRestConstants.EndPoint.SPRINT(sprintCode),
+            MapUtils.of("fields", fields));
 
-        RestResponse<JQLSearchResult> searchResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
-                JQLSearchResult.class);
+    RestResponse<JQLSearchResult> searchResponse =
+        HttpRestClient.doGet(
+            requestURLDetails, IntegrationUtil.initJiraHeaders(properties), JQLSearchResult.class);
 
-        return searchResponse.getBody();
-    }
+    return searchResponse.getBody();
+  }
 
-    public BoardsResponse getAllBoards(){
-        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
-        MandatoryFieldValidator.getInstance().validate(properties);
-        RequestURLDetails requestURLDetails = new RequestURLDetails(properties.getBaseURL(),
-                JiraRestConstants.EndPoint.BOARDS, null);
+  public BoardsResponse getAllBoards() {
+    JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+    MandatoryFieldValidator.getInstance().validate(properties);
+    RequestURLDetails requestURLDetails =
+        new RequestURLDetails(properties.getBaseURL(), JiraRestConstants.EndPoint.BOARDS, null);
 
-        RestResponse<BoardsResponse> boardsResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
-                BoardsResponse.class);
+    RestResponse<BoardsResponse> boardsResponse =
+        HttpRestClient.doGet(
+            requestURLDetails, IntegrationUtil.initJiraHeaders(properties), BoardsResponse.class);
 
-        return boardsResponse.getBody();
-    }
+    return boardsResponse.getBody();
+  }
 
-    public SprintResponse getSprintsInABoard(String boardId) {
-        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
-        MandatoryFieldValidator.getInstance().validate(properties);
-        RequestURLDetails requestURLDetails = new RequestURLDetails(properties.getBaseURL(),
-                JiraRestConstants.EndPoint.SPRINTS(boardId), null);
+  public SprintResponse getSprintsInABoard(String boardId) {
+    JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+    MandatoryFieldValidator.getInstance().validate(properties);
+    RequestURLDetails requestURLDetails =
+        new RequestURLDetails(
+            properties.getBaseURL(), JiraRestConstants.EndPoint.SPRINTS(boardId), null);
 
-        RestResponse<SprintResponse> sprintResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
-                SprintResponse.class);
+    RestResponse<SprintResponse> sprintResponse =
+        HttpRestClient.doGet(
+            requestURLDetails, IntegrationUtil.initJiraHeaders(properties), SprintResponse.class);
 
-        return sprintResponse.getBody();
-    }
+    return sprintResponse.getBody();
+  }
 }

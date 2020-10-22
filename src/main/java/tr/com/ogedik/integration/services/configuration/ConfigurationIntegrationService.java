@@ -5,14 +5,11 @@ import org.springframework.stereotype.Service;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
 import tr.com.ogedik.scrumier.proxy.clients.ConfigurationProxy;
 
-/**
- * @author orkun.gedik
- */
+/** @author orkun.gedik */
 @Service
 public class ConfigurationIntegrationService {
 
-  @Autowired
-  private ConfigurationProxy configurationProxy;
+  @Autowired private ConfigurationProxy configurationProxy;
 
   public JiraConfigurationProperties getJiraConfigurationProperties() {
     return configurationProxy.getJiraInstanceConfig();

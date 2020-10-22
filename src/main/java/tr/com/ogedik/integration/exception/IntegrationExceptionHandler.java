@@ -5,9 +5,7 @@ import tr.com.ogedik.commons.expection.ErrorException;
 import tr.com.ogedik.commons.expection.model.ErrorMessage;
 import tr.com.ogedik.commons.rest.response.RestResponse;
 
-/**
- * @author orkun.gedik
- */
+/** @author orkun.gedik */
 public class IntegrationExceptionHandler {
 
   public static InstanceInfo handleNotRunningInstance(InstanceInfo instanceInfo) {

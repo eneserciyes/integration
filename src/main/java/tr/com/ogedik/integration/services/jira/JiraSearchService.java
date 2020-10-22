@@ -17,46 +17,55 @@ import tr.com.ogedik.integration.util.IntegrationUtil;
 @Service
 public class JiraSearchService {
 
-    @Autowired
-    private ConfigurationIntegrationService configurationService;
+  @Autowired private ConfigurationIntegrationService configurationService;
 
-    public JQLSearchResult getWorklogSearchResult(String username, String startDate, String endDate) {
-        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
-        MandatoryFieldValidator.getInstance().validate(properties);
+  public JQLSearchResult getWorklogSearchResult(String username, String startDate, String endDate) {
+    JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+    MandatoryFieldValidator.getInstance().validate(properties);
 
-        //TODO: start and end date validation
-        final String jql = String.format("worklogAuthor=%s and worklogDate >= %s and worklogDate <= %s",
-                username, startDate, endDate);
+    // TODO: start and end date validation
+    final String jql =
+        String.format(
+            "worklogAuthor=%s and worklogDate >= %s and worklogDate <= %s",
+            username, startDate, endDate);
 
-        return queryJQL(properties, jql, IssueFields.WORKLOG, IssueFields.SUMMARY);
-    }
+    return queryJQL(properties, jql, IssueFields.WORKLOG, IssueFields.SUMMARY);
+  }
 
-    public JQLSearchResult getRecentIssues(){
-        JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
-        MandatoryFieldValidator.getInstance().validate(properties);
-        final String jql = "issueKey in issueHistory() ORDER BY lastViewed DESC";
+  public JQLSearchResult getRecentIssues() {
+    JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+    MandatoryFieldValidator.getInstance().validate(properties);
+    final String jql = "issueKey in issueHistory() ORDER BY lastViewed DESC";
 
-        return queryJQL(properties,jql, IssueFields.SUMMARY);
-    }
+    return queryJQL(properties, jql, IssueFields.SUMMARY);
+  }
 
-    private JQLSearchResult queryJQL(JiraConfigurationProperties properties, String jql) {
-        RequestURLDetails requestURLDetails = new RequestURLDetails(properties.getBaseURL(),
-                JiraRestConstants.EndPoint.SEARCH, MapUtils.of("jql", jql, "startAt", "0"));
+  private JQLSearchResult queryJQL(JiraConfigurationProperties properties, String jql) {
+    RequestURLDetails requestURLDetails =
+        new RequestURLDetails(
+            properties.getBaseURL(),
+            JiraRestConstants.EndPoint.SEARCH,
+            MapUtils.of("jql", jql, "startAt", "0"));
 
-        RestResponse<JQLSearchResult> searchResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
-                JQLSearchResult.class);
+    RestResponse<JQLSearchResult> searchResponse =
+        HttpRestClient.doGet(
+            requestURLDetails, IntegrationUtil.initJiraHeaders(properties), JQLSearchResult.class);
 
-        return searchResponse.getBody();
-    }
+    return searchResponse.getBody();
+  }
 
+  private JQLSearchResult queryJQL(
+      JiraConfigurationProperties properties, String jql, String... fields) {
+    RequestURLDetails requestURLDetails =
+        new RequestURLDetails(
+            properties.getBaseURL(),
+            JiraRestConstants.EndPoint.SEARCH,
+            MapUtils.of("jql", jql, "fields", String.join(",", fields)));
 
-    private JQLSearchResult queryJQL(JiraConfigurationProperties properties, String jql, String... fields) {
-        RequestURLDetails requestURLDetails = new RequestURLDetails(properties.getBaseURL(),
-                JiraRestConstants.EndPoint.SEARCH, MapUtils.of("jql", jql, "fields", String.join(",", fields)));
+    RestResponse<JQLSearchResult> searchResponse =
+        HttpRestClient.doGet(
+            requestURLDetails, IntegrationUtil.initJiraHeaders(properties), JQLSearchResult.class);
 
-        RestResponse<JQLSearchResult> searchResponse = HttpRestClient.doGet(requestURLDetails, IntegrationUtil.initJiraHeaders(properties),
-                JQLSearchResult.class);
-
-        return searchResponse.getBody();
-    }
+    return searchResponse.getBody();
+  }
 }

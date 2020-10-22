@@ -51,21 +51,22 @@ public class JiraCRUDService {
     MandatoryFieldValidator.getInstance().validate(properties);
 
     JiraCreateWorklogRequest request =
-            JiraCreateWorklogRequest.builder()
-                    .comment(updateWorklogRequest.getComment())
-                    .started(updateWorklogRequest.getStarted())
-                    .timeSpentSeconds(updateWorklogRequest.getTimeSpentSeconds())
-                    .build();
+        JiraCreateWorklogRequest.builder()
+            .comment(updateWorklogRequest.getComment())
+            .started(updateWorklogRequest.getStarted())
+            .timeSpentSeconds(updateWorklogRequest.getTimeSpentSeconds())
+            .build();
 
     RequestURLDetails requestURLDetails =
-            new RequestURLDetails(
-                    properties.getBaseURL(),
-                    JiraRestConstants.EndPoint.UPDATE(updateWorklogRequest.getIssueKey(), updateWorklogRequest.getId()),
-                    null);
+        new RequestURLDetails(
+            properties.getBaseURL(),
+            JiraRestConstants.EndPoint.UPDATE(
+                updateWorklogRequest.getIssueKey(), updateWorklogRequest.getId()),
+            null);
 
     RestResponse<String> response =
-            HttpRestClient.doPut(
-                    requestURLDetails, request, IntegrationUtil.initJiraHeaders(properties), String.class);
+        HttpRestClient.doPut(
+            requestURLDetails, request, IntegrationUtil.initJiraHeaders(properties), String.class);
 
     return response.getHttpStatusCode() == HttpStatus.OK.value();
   }

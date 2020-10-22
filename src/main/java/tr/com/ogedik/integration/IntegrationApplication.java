@@ -10,8 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients("tr.com.ogedik.scrumier.proxy.clients")
 public class IntegrationApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IntegrationApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(IntegrationApplication.class, args);
+  }
 }
