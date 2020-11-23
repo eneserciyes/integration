@@ -9,6 +9,7 @@ import tr.com.ogedik.commons.rest.AbstractController;
 import tr.com.ogedik.commons.rest.request.model.AuthenticationRequest;
 import tr.com.ogedik.commons.rest.request.model.CreateUpdateWorklogRequest;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
+import tr.com.ogedik.commons.rest.request.model.MailServerProperties;
 import tr.com.ogedik.commons.rest.request.model.sessions.JiraSession;
 import tr.com.ogedik.commons.rest.response.AbstractResponse;
 import tr.com.ogedik.integration.services.jira.JiraAgileService;
@@ -57,6 +58,13 @@ public class JiraIntegrationController extends AbstractController {
 
     return AbstractResponse.build(
         result, result.isAuthorized() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
+  }
+
+  @PostMapping(Services.Path.TEST_MAIL)
+  public AbstractResponse connectMailServer(@RequestBody MailServerProperties properties){
+
+    Boolean result = jiraIntegrationService.connectMail(properties);
+    return AbstractResponse.build(result);
   }
 
   @GetMapping(Services.Path.JIRA_USER)

@@ -1,5 +1,8 @@
 package tr.com.ogedik.integration.services.jira;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -8,6 +11,7 @@ import tr.com.ogedik.commons.rest.request.client.HttpRestClient;
 import tr.com.ogedik.commons.rest.request.client.helper.RequestURLDetails;
 import tr.com.ogedik.commons.rest.request.model.AuthenticationRequest;
 import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
+import tr.com.ogedik.commons.rest.request.model.MailServerProperties;
 import tr.com.ogedik.commons.rest.request.model.sessions.JiraSession;
 import tr.com.ogedik.commons.rest.request.model.sessions.UnauthorizedJiraSession;
 import tr.com.ogedik.commons.rest.response.RestResponse;
@@ -16,6 +20,12 @@ import tr.com.ogedik.commons.validator.MandatoryFieldValidator;
 import tr.com.ogedik.integration.constants.JiraRestConstants;
 import tr.com.ogedik.integration.services.configuration.ConfigurationIntegrationService;
 import tr.com.ogedik.integration.util.IntegrationUtil;
+
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import java.util.Properties;
 
 /**
  * This service processes the received request from other microservices in the project and routes
@@ -30,7 +40,7 @@ import tr.com.ogedik.integration.util.IntegrationUtil;
 public class JiraIntegrationService {
 
   @Autowired private ConfigurationIntegrationService configurationService;
-
+  private static final Logger logger = LogManager.getLogger(JiraIntegrationService.class);
   /**
    * Authenticates to configured Jira instance.
    *
@@ -94,5 +104,45 @@ public class JiraIntegrationService {
             requestURLDetails, IntegrationUtil.initJiraHeaders(properties), JiraUser.class);
 
     return userResponse.getBody();
+  }
+
+  public Boolean connectMail(MailServerProperties properties) {
+    boolean auth = Boolean.parseBoolean(properties.getAuth());
+    String enctype = properties.getEnctype();
+    String port  = properties.getPort();
+    String host = properties.getHost();
+    String username = properties.getUsername();
+    String password = properties.getPassword();
+
+    boolean result = false;
+    try {
+      Properties props = new Properties();
+      if (auth) {
+        props.setProperty("mail.smtp.auth", "true");
+      } else {
+        props.setProperty("mail.smtp.auth", "false");
+      }
+      if (enctype.endsWith("TLS")) {
+        props.setProperty("mail.smtp.starttls.enable", "true");
+      } else if (enctype.endsWith("SSL")) {
+        props.setProperty("mail.smtp.startssl.enable", "true");
+      }
+      Session session = Session.getInstance(props, null);
+      Transport transport = session.getTransport("smtp");
+      int portInt = Integer.parseInt(port);
+      transport.connect(host, portInt, username, password);
+      transport.close();
+      result = true;
+
+    } catch(AuthenticationFailedException e) {
+      logger.log(Level.ERROR,"SMTP: Authentication Failed - {}", e.getMessage());
+
+    } catch(MessagingException e) {
+      logger.log(Level.ERROR, "SMTP: Messaging Exception Occurred - {}", e.getMessage());
+    } catch (Exception e) {
+      logger.log(Level.ERROR, "SMTP: Unknown Exception - {}", e.getMessage());
+    }
+
+    return result;
   }
 }
