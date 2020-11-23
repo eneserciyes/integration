@@ -9,7 +9,8 @@ public class JiraRestConstants {
     public static final String SESSION = "/rest/auth/1/session";
     public static final String BOARDS = "/rest/agile/1.0/board";
 
-    public static String SPRINT(String sprintCode) {
+    public static String SPRINT(String sprintCode) {return "/rest/agile/1.0/sprint/" + sprintCode; }
+    public static String SPRINT_ISSUES(String sprintCode) {
       return "/rest/agile/1.0/sprint/" + sprintCode + "/issue";
     }
 

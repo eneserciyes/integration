@@ -8,6 +8,7 @@ import tr.com.ogedik.commons.rest.response.BoardsResponse;
 import tr.com.ogedik.commons.rest.response.RestResponse;
 import tr.com.ogedik.commons.rest.response.SprintResponse;
 import tr.com.ogedik.commons.rest.response.model.JQLSearchResult;
+import tr.com.ogedik.commons.rest.response.model.Sprint;
 import tr.com.ogedik.commons.util.MapUtils;
 import tr.com.ogedik.commons.validator.MandatoryFieldValidator;
 import tr.com.ogedik.integration.constants.JiraRestConstants;
@@ -34,7 +35,7 @@ public class JiraAgileService {
     RequestURLDetails requestURLDetails =
         new RequestURLDetails(
             properties.getBaseURL(),
-            JiraRestConstants.EndPoint.SPRINT(sprintCode),
+            JiraRestConstants.EndPoint.SPRINT_ISSUES(sprintCode),
             MapUtils.of("fields", fields));
 
     RestResponse<JQLSearchResult> searchResponse =
@@ -69,5 +70,20 @@ public class JiraAgileService {
             requestURLDetails, IntegrationUtil.initJiraHeaders(properties), SprintResponse.class);
 
     return sprintResponse.getBody();
+  }
+
+  public Sprint getSprint(String sprintCode) {
+    JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
+    MandatoryFieldValidator.getInstance().validate(properties);
+    RequestURLDetails requestURLDetails =
+            new RequestURLDetails(
+                    properties.getBaseURL(), JiraRestConstants.EndPoint.SPRINT(sprintCode), null);
+
+    RestResponse<Sprint> sprint =
+            HttpRestClient.doGet(
+                    requestURLDetails, IntegrationUtil.initJiraHeaders(properties), Sprint.class);
+
+    return sprint.getBody();
+
   }
 }

@@ -111,6 +111,11 @@ public class JiraIntegrationController extends AbstractController {
     return AbstractResponse.build(jiraAgileService.getSprintsInABoard(boardId));
   }
 
+  @GetMapping(Services.Path.SPRINT + "/{sprintCode}")
+  public AbstractResponse getSprint(@PathVariable(name="sprintCode") String sprintCode){
+    return AbstractResponse.build(jiraAgileService.getSprint(sprintCode));
+  }
+
   @PostMapping(Services.Path.WORKLOG)
   public AbstractResponse createNewWorklog(
       @RequestBody CreateUpdateWorklogRequest createWorklogRequest) {
