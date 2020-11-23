@@ -21,7 +21,7 @@ public class JiraSearchService {
 
   public JQLSearchResult getWorklogSearchResult(String username, String startDate, String endDate) {
     JiraConfigurationProperties properties = configurationService.getJiraConfigurationProperties();
-    MandatoryFieldValidator.getInstance().validate(properties);
+      MandatoryFieldValidator.getInstance().validate(properties);
 
     // TODO: start and end date validation
     final String jql =
