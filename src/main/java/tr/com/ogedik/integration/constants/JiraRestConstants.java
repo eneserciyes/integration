@@ -5,6 +5,7 @@ public class JiraRestConstants {
 
   public static class EndPoint {
     public static final String USER = "/rest/api/2/user";
+    public static final String USER_SEARCH = "/rest/api/2/user/search";
     public static final String SEARCH = "/rest/api/2/search";
     public static final String SESSION = "/rest/auth/1/session";
     public static final String BOARDS = "/rest/agile/1.0/board";

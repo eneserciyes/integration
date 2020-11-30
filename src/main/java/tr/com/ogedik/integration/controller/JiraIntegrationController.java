@@ -12,10 +12,7 @@ import tr.com.ogedik.commons.rest.request.model.JiraConfigurationProperties;
 import tr.com.ogedik.commons.rest.request.model.MailServerProperties;
 import tr.com.ogedik.commons.rest.request.model.sessions.JiraSession;
 import tr.com.ogedik.commons.rest.response.AbstractResponse;
-import tr.com.ogedik.integration.services.jira.JiraAgileService;
-import tr.com.ogedik.integration.services.jira.JiraCRUDService;
-import tr.com.ogedik.integration.services.jira.JiraIntegrationService;
-import tr.com.ogedik.integration.services.jira.JiraSearchService;
+import tr.com.ogedik.integration.services.jira.*;
 
 /** @author orkun.gedik */
 @RestController
@@ -29,16 +26,18 @@ public class JiraIntegrationController extends AbstractController {
   private final JiraCRUDService jiraCRUDService;
 
   private final JiraAgileService jiraAgileService;
+  private final JiraUserService jiraUserService;
 
   public JiraIntegrationController(
-      JiraIntegrationService jiraIntegrationService,
-      JiraSearchService jiraSearchService,
-      JiraCRUDService jiraCRUDService,
-      JiraAgileService jiraAgileService) {
+          JiraIntegrationService jiraIntegrationService,
+          JiraSearchService jiraSearchService,
+          JiraCRUDService jiraCRUDService,
+          JiraAgileService jiraAgileService, JiraUserService jiraUserService) {
     this.jiraIntegrationService = jiraIntegrationService;
     this.jiraSearchService = jiraSearchService;
     this.jiraCRUDService = jiraCRUDService;
     this.jiraAgileService = jiraAgileService;
+    this.jiraUserService = jiraUserService;
   }
 
   @PostMapping(Services.Path.JIRA_AUTH)
@@ -71,6 +70,12 @@ public class JiraIntegrationController extends AbstractController {
   public AbstractResponse getJiraUser(@RequestParam(name = "username") String username) {
     logger.info("A request has been received to retrieve jira user with name {}", username);
     return AbstractResponse.build(jiraIntegrationService.getJiraUser(username));
+  }
+
+  @GetMapping(Services.Path.USER_SEARCH)
+  public AbstractResponse getUserSearchResults(@RequestParam(name="searchQuery") String searchQuery){
+
+    return AbstractResponse.build(jiraUserService.searchForUsers(searchQuery));
   }
 
   @GetMapping(Services.Path.ISSUES)

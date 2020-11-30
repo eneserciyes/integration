@@ -43,7 +43,7 @@ public class JiraCRUDService {
         HttpRestClient.doPost(
             requestURLDetails, request, IntegrationUtil.initJiraHeaders(properties), String.class);
 
-    return response.getHttpStatusCode() == HttpStatus.CREATED.value();
+    return response .getHttpStatusCode() == HttpStatus.CREATED.value();
   }
 
   public Boolean updateWorklog(CreateUpdateWorklogRequest updateWorklogRequest) {
